@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:notesapp/models/note.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 import 'package:notesapp/screen/add_screen.dart';
+import 'package:notesapp/screen/edit_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -55,31 +56,64 @@ class NotesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(15),
-      padding: EdgeInsets.all(15),
-      height: 150,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(237, 237, 237, 1),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            note.title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditScreen(note),
           ),
-          SizedBox(height: 5),
-          Text(
-            note.description,
-            style: TextStyle(fontSize: 17),
-          ),
-          Text(
-            'Created At: ${note.createdAt.toString()}',
-            style: TextStyle(fontSize: 15, color: Colors.grey),
-          ),
-        ],
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.all(15),
+        padding: EdgeInsets.all(15),
+        height: 150,
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(237, 237, 237, 1),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              note.title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text(
+              note.description,
+              style: TextStyle(fontSize: 17),
+            ),
+            Text(
+              'Created At: ${note.createdAt.toString()}',
+              style: TextStyle(fontSize: 15, color: Colors.grey),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditScreen(note),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    Provider.of<NotesOperation>(context, listen: false)
+                        .deleteNote(note.id);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
