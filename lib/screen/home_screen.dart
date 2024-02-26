@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/note.dart';
 import 'package:notesapp/models/NotesOperation.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:notesapp/screen/add_screen.dart';
 import 'package:notesapp/screen/edit_screen.dart';
 
@@ -19,17 +20,14 @@ class HomeScreen extends StatelessWidget {
             ),
           );
         },
-        child: Icon(Icons.add, size: 30, color: Colors.blueGrey),
+        child: Icon(Icons.add, size: 30, color: Colors.white),
         backgroundColor: const Color.fromRGBO(42, 170, 210, 1),
       ),
       appBar: AppBar(
         title: Text(
           'ME Notes',
-          style: TextStyle(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+          style: GoogleFonts.inter(
+              color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         elevation: 0,
@@ -37,11 +35,37 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Consumer<NotesOperation>(
         builder: (context, NotesOperation data, child) {
-          return ListView.builder(
-            itemCount: data.getNotes.length,
-            itemBuilder: (context, index) {
-              return NotesCard(data.getNotes[index]);
-            },
+          return Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextField(
+                    onChanged: (value) {},
+                    decoration: InputDecoration(
+                        labelText: 'Search',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200]),
+                  ),
+                ),
+              ),
+              Expanded(
+                  child: ListView.builder(
+                itemCount: data.getNotes.length,
+                itemBuilder: (context, index) {
+                  return NotesCard(data.getNotes[index]);
+                },
+              ))
+            ],
           );
         },
       ),
@@ -106,10 +130,32 @@ class NotesCard extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.delete),
                   onPressed: () {
-                    Provider.of<NotesOperation>(context, listen: false)
-                        .deleteNote(note.id);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Hapus catatan ini?'),
+                            content: Text(
+                                'Apakah Anda yakin ingin menghapus catatan ini'),
+                            actions: <Widget>[
+                              TextButton(
+                                  child: Text('Tidak'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  }),
+                              TextButton(
+                                  child: Text('Iya'),
+                                  onPressed: () {
+                                    Provider.of<NotesOperation>(context,
+                                            listen: false)
+                                        .deleteNote(note.id);
+                                    Navigator.of(context).pop();
+                                  })
+                            ],
+                          );
+                        });
                   },
-                ),
+                )
               ],
             ),
           ],
