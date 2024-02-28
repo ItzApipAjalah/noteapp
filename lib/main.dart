@@ -5,10 +5,6 @@ import 'package:notesapp/screen/home_screen.dart';
 import 'package:supabase/supabase.dart';
 
 void main() {
-  final supabaseUrl = 'https://bjrpysehgevgykrjrank.supabase.co';
-  final supabaseKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqcnB5c2VoZ2V2Z3lrcmpyYW5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc3MTIyNTksImV4cCI6MjAyMzI4ODI1OX0.C7XjJkw9Rcokx5nXyORXK3JDidyyAxx5Aj5DaDXxaBY';
-  final client = SupabaseClient(supabaseUrl, supabaseKey);
   runApp(MyApp());
 }
 

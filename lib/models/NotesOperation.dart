@@ -31,16 +31,15 @@ class NotesOperation with ChangeNotifier {
   }
 
   void updateNote(String id, String newTitle, String newDescription) {
-  final noteIndex = _notes.indexWhere((note) => note.id == id);
-  if (noteIndex != -1) {
-    _notes[noteIndex] = Note(
-      id: id,
-      title: newTitle,
-      description: newDescription,
-      createdAt: _notes[noteIndex].createdAt,
-    );
-    notifyListeners();
+    final noteIndex = _notes.indexWhere((note) => note.id == id);
+    if (noteIndex != -1) {
+      _notes[noteIndex] = Note(
+        id: id,
+        title: newTitle,
+        description: newDescription,
+        createdAt: _notes[noteIndex].createdAt,
+      );
+      notifyListeners();
+    }
   }
-}
-
 }
