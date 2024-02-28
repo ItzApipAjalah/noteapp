@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:notesapp/models/note.dart';
 
 class NotesOperation with ChangeNotifier {
-  //List of note
   List<Note> _notes = [];
 
   List<Note> get getNotes {
@@ -10,7 +11,22 @@ class NotesOperation with ChangeNotifier {
   }
 
   NotesOperation() {
-    // addNewNote('First Note', 'First Note Description');
+    _loadNotes();
+  }
+
+  void _loadNotes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? notesData = prefs.getString('notes');
+    if (notesData != null) {
+      Iterable decoded = jsonDecode(notesData);
+      _notes = decoded.map((note) => Note.fromJson(note)).toList();
+      notifyListeners();
+    }
+  }
+
+  void _saveNotes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('notes', jsonEncode(_notes));
   }
 
   void addNewNote(String title, String description, DateTime createdAt) {
@@ -22,11 +38,13 @@ class NotesOperation with ChangeNotifier {
     );
 
     _notes.add(newNote);
+    _saveNotes(); // Save notes after adding new note
     notifyListeners();
   }
 
   void deleteNote(String id) {
     _notes.removeWhere((note) => note.id == id);
+    _saveNotes(); // Save notes after deleting a note
     notifyListeners();
   }
 
@@ -39,6 +57,7 @@ class NotesOperation with ChangeNotifier {
         description: newDescription,
         createdAt: _notes[noteIndex].createdAt,
       );
+      _saveNotes(); // Save notes after updating a note
       notifyListeners();
     }
   }
