@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 
@@ -11,13 +12,29 @@ class AddScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          'ME Notes',
-          style: TextStyle(color: Colors.black),
-        ),
+        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: IconButton(
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Provider.of<NotesOperation>(context, listen: false)
+                      .addNewNote(titleText, descriptionText, DateTime.now());
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.only(
@@ -38,11 +55,10 @@ class AddScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+              style: GoogleFonts.inter(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
               onChanged: (value) {
                 titleText = value;
               },
@@ -57,10 +73,7 @@ class AddScreen extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
+                style: GoogleFonts.inter(fontSize: 18, color: Colors.black),
                 onChanged: (value) {
                   descriptionText = value;
                 },
@@ -68,14 +81,6 @@ class AddScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Provider.of<NotesOperation>(context, listen: false)
-        .addNewNote(titleText, descriptionText, DateTime.now());
-    Navigator.pop(context);
-        },
-        child: Icon(Icons.save),
       ),
     );
   }

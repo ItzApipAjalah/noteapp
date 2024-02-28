@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 import 'package:notesapp/screen/home_screen.dart';
-import 'package:supabase/supabase.dart';
 
 void main() {
   runApp(MyApp());

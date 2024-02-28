@@ -36,13 +36,30 @@ class _EditScreenState extends State<EditScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          'ME Notes',
-          style: TextStyle(color: Colors.black),
-        ),
+        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: IconButton(
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Provider.of<NotesOperation>(context, listen: false)
+                      .updateNote(widget.note.id, _titleController.text,
+                          _descriptionController.text);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.only(
@@ -98,16 +115,6 @@ class _EditScreenState extends State<EditScreen> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Provider.of<NotesOperation>(context, listen: false).updateNote(
-              widget.note.id,
-              _titleController.text,
-              _descriptionController.text);
-          Navigator.pop(context);
-        },
-        child: Icon(Icons.save),
       ),
     );
   }
