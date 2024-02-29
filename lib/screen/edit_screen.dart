@@ -98,7 +98,10 @@ class _EditScreenState extends State<EditScreen> {
           children: [
             TextField(
               decoration: InputDecoration(
-                border: InputBorder.none,
+                enabledBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Colors.black), // Atur warna garis
+                ), // Garis pembatas di bawah input
                 hintText: 'Title',
                 hintStyle: TextStyle(
                   fontSize: 20,

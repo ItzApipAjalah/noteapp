@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notesapp/screen/splashscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 import 'package:notesapp/screen/home_screen.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       create: (context) => NotesOperation(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
+        home: SplashScreen(),
       ),
     );
   }

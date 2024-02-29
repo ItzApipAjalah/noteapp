@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Icon(Icons.add, size: 30, color: Colors.white),
         backgroundColor: const Color.fromRGBO(42, 170, 210, 1),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       appBar: AppBar(
         title: Text(
           'ME Notes',
@@ -188,17 +189,17 @@ class NotesCard extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Hapus catatan ini?'),
+                            title: Text('Delete this note?'),
                             content: Text(
-                                'Apakah Anda yakin ingin menghapus catatan ini'),
+                                'Are you sure you want to delete this note'),
                             actions: <Widget>[
                               TextButton(
-                                  child: Text('Tidak'),
+                                  child: Text('No'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   }),
                               TextButton(
-                                  child: Text('Iya'),
+                                  child: Text('Yes'),
                                   onPressed: () {
                                     Provider.of<NotesOperation>(context,
                                             listen: false)
