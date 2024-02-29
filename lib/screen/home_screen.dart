@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:notesapp/models/note.dart';
 import 'package:notesapp/models/NotesOperation.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:notesapp/screen/add_screen.dart';
 import 'package:notesapp/screen/edit_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController searchController = TextEditingController();
+  String searchKeyword = '';
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +49,13 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Consumer<NotesOperation>(
         builder: (context, NotesOperation data, child) {
+          final List<Note> filteredNotes = data.getNotes.where((note) {
+            final titleLower = note.title.toLowerCase();
+            final descriptionLower = note.description.toLowerCase();
+            final keywordLower = searchKeyword.toLowerCase();
+            return titleLower.contains(keywordLower) ||
+                descriptionLower.contains(keywordLower);
+          }).toList();
           return Column(
             children: [
               Padding(
@@ -45,26 +66,42 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
-                    onChanged: (value) {},
+                    controller: searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        searchKeyword = value;
+                      });
+                    },
                     decoration: InputDecoration(
-                        labelText: 'Search',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[200]),
+                      labelText: 'Search',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          searchController.clear();
+                          setState(() {
+                            searchKeyword = '';
+                          });
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
               Expanded(
-                  child: ListView.builder(
-                itemCount: data.getNotes.length,
-                itemBuilder: (context, index) {
-                  return NotesCard(data.getNotes[index]);
-                },
-              ))
+                child: ListView.builder(
+                  itemCount: filteredNotes.length,
+                  itemBuilder: (context, index) {
+                    return NotesCard(filteredNotes[index]);
+                  },
+                ),
+              ),
             ],
           );
         },

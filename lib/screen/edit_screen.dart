@@ -51,10 +51,36 @@ class _EditScreenState extends State<EditScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  Provider.of<NotesOperation>(context, listen: false)
-                      .updateNote(widget.note.id, _titleController.text,
-                          _descriptionController.text);
-                  Navigator.pop(context);
+                  String newTitle = _titleController.text;
+                  String newDescription = _descriptionController.text;
+
+                  // Periksa apakah judul atau deskripsi kosong
+                  if (newTitle.isEmpty || newDescription.isEmpty) {
+                    // Tampilkan pesan jika judul atau deskripsi kosong
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Title and description cannot be empty.'),
+                      ),
+                    );
+                  } else if (newTitle == widget.note.title &&
+                      newDescription == widget.note.description) {
+                    // Tampilkan pesan jika tidak ada perubahan
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('No data changes were made.'),
+                      ),
+                    );
+                  } else {
+                    // Simpan perubahan jika ada
+                    Provider.of<NotesOperation>(context, listen: false)
+                        .updateNote(widget.note.id, newTitle, newDescription);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Data has been updated.'),
+                      ),
+                    );
+                  }
                 },
               ),
             ),

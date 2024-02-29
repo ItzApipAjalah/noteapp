@@ -27,9 +27,24 @@ class AddScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  Provider.of<NotesOperation>(context, listen: false)
-                      .addNewNote(titleText, descriptionText, DateTime.now());
-                  Navigator.pop(context);
+                  if (titleText.isNotEmpty && descriptionText.isNotEmpty) {
+                    Provider.of<NotesOperation>(context, listen: false)
+                        .addNewNote(titleText, descriptionText, DateTime.now());
+                    Navigator.pop(context);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Data has been saved.'),
+                      ),
+                    );
+                  } else {
+                    // Tampilkan pesan kesalahan jika judul atau deskripsi kosong
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Title and description cannot be empty.'),
+                      ),
+                    );
+                  }
                 },
               ),
             ),
