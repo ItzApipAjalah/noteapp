@@ -65,32 +65,39 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      setState(() {
-                        searchKeyword = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Search',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              searchKeyword = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Search',
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                          ),
+                        ),
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          searchController.clear();
-                          setState(() {
-                            searchKeyword = '';
-                          });
-                        },
-                      ),
-                    ),
+                      if (searchController.text.isNotEmpty)
+                        IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            searchController.clear();
+                            setState(() {
+                              searchKeyword = '';
+                            });
+                          },
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -114,6 +121,14 @@ class NotesCard extends StatelessWidget {
   final Note note;
 
   NotesCard(this.note);
+
+  String truncateDescription(String description) {
+    if (description.length <= 30) {
+      return description;
+    } else {
+      return description.substring(0, 30) + '...';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +158,9 @@ class NotesCard extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Text(
-              note.description,
+              truncateDescription(note.description),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 17),
             ),
             Text(

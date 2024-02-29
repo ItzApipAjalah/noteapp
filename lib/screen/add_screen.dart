@@ -3,12 +3,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 
-class AddScreen extends StatelessWidget {
+class AddScreen extends StatefulWidget {
+  @override
+  _AddScreenState createState() => _AddScreenState();
+}
+
+class _AddScreenState extends State<AddScreen> {
+  String titleText = '';
+  String descriptionText = '';
+
   @override
   Widget build(BuildContext context) {
-    String titleText = ''; // Assign an initial value
-    String descriptionText = ''; // Assign an initial value
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -38,7 +43,6 @@ class AddScreen extends StatelessWidget {
                       ),
                     );
                   } else {
-                    // Tampilkan pesan kesalahan jika judul atau deskripsi kosong
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Title and description cannot be empty.'),
@@ -75,7 +79,9 @@ class AddScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
               onChanged: (value) {
-                titleText = value;
+                setState(() {
+                  titleText = value;
+                });
               },
             ),
             Expanded(
@@ -89,8 +95,12 @@ class AddScreen extends StatelessWidget {
                   ),
                 ),
                 style: GoogleFonts.inter(fontSize: 18, color: Colors.black),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
                 onChanged: (value) {
-                  descriptionText = value;
+                  setState(() {
+                    descriptionText = value;
+                  });
                 },
               ),
             ),

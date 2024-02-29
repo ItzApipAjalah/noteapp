@@ -15,6 +15,8 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
+  late int _titleCursorPosition;
+  late int _descriptionCursorPosition;
 
   @override
   void initState() {
@@ -22,6 +24,8 @@ class _EditScreenState extends State<EditScreen> {
     _titleController = TextEditingController(text: widget.note.title);
     _descriptionController =
         TextEditingController(text: widget.note.description);
+    _titleCursorPosition = _titleController.text.length;
+    _descriptionCursorPosition = _descriptionController.text.length;
   }
 
   @override
@@ -54,9 +58,7 @@ class _EditScreenState extends State<EditScreen> {
                   String newTitle = _titleController.text;
                   String newDescription = _descriptionController.text;
 
-                  // Periksa apakah judul atau deskripsi kosong
                   if (newTitle.isEmpty || newDescription.isEmpty) {
-                    // Tampilkan pesan jika judul atau deskripsi kosong
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Title and description cannot be empty.'),
@@ -64,14 +66,12 @@ class _EditScreenState extends State<EditScreen> {
                     );
                   } else if (newTitle == widget.note.title &&
                       newDescription == widget.note.description) {
-                    // Tampilkan pesan jika tidak ada perubahan
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('No data changes were made.'),
                       ),
                     );
                   } else {
-                    // Simpan perubahan jika ada
                     Provider.of<NotesOperation>(context, listen: false)
                         .updateNote(widget.note.id, newTitle, newDescription);
                     Navigator.pop(context);
@@ -113,8 +113,9 @@ class _EditScreenState extends State<EditScreen> {
               ),
               controller: _titleController,
               onChanged: (value) {
-                _titleController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _titleController.text.length));
+                setState(() {
+                  _titleCursorPosition = _titleController.selection.baseOffset;
+                });
               },
             ),
             SizedBox(height: 20),
@@ -133,9 +134,13 @@ class _EditScreenState extends State<EditScreen> {
                   color: Colors.black,
                 ),
                 controller: _descriptionController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
                 onChanged: (value) {
-                  _descriptionController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: _descriptionController.text.length));
+                  setState(() {
+                    _descriptionCursorPosition =
+                        _descriptionController.selection.baseOffset;
+                  });
                 },
               ),
             ),
