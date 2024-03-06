@@ -15,6 +15,8 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
+  late int _titleCursorPosition;
+  late int _descriptionCursorPosition;
 
   @override
   void initState() {
@@ -22,6 +24,8 @@ class _EditScreenState extends State<EditScreen> {
     _titleController = TextEditingController(text: widget.note.title);
     _descriptionController =
         TextEditingController(text: widget.note.description);
+    _titleCursorPosition = _titleController.text.length;
+    _descriptionCursorPosition = _descriptionController.text.length;
   }
 
   @override
@@ -36,13 +40,52 @@ class _EditScreenState extends State<EditScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          'ME Notes',
-          style: TextStyle(color: Colors.black),
-        ),
+        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: IconButton(
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  String newTitle = _titleController.text;
+                  String newDescription = _descriptionController.text;
+
+                  if (newTitle.isEmpty || newDescription.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Title and description cannot be empty.'),
+                      ),
+                    );
+                  } else if (newTitle == widget.note.title &&
+                      newDescription == widget.note.description) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('No data changes were made.'),
+                      ),
+                    );
+                  } else {
+                    Provider.of<NotesOperation>(context, listen: false)
+                        .updateNote(widget.note.id, newTitle, newDescription);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Data has been updated.'),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.only(
@@ -70,8 +113,9 @@ class _EditScreenState extends State<EditScreen> {
               ),
               controller: _titleController,
               onChanged: (value) {
-                _titleController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _titleController.text.length));
+                setState(() {
+                  _titleCursorPosition = _titleController.selection.baseOffset;
+                });
               },
             ),
             SizedBox(height: 20),
@@ -90,24 +134,18 @@ class _EditScreenState extends State<EditScreen> {
                   color: Colors.black,
                 ),
                 controller: _descriptionController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
                 onChanged: (value) {
-                  _descriptionController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: _descriptionController.text.length));
+                  setState(() {
+                    _descriptionCursorPosition =
+                        _descriptionController.selection.baseOffset;
+                  });
                 },
               ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Provider.of<NotesOperation>(context, listen: false).updateNote(
-              widget.note.id,
-              _titleController.text,
-              _descriptionController.text);
-          Navigator.pop(context);
-        },
-        child: Icon(Icons.save),
       ),
     );
   }
