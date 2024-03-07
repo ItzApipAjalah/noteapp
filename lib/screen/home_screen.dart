@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notesapp/screen/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notesapp/models/note.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 import 'package:notesapp/screen/add_screen.dart';
 import 'package:notesapp/screen/edit_screen.dart';
+import 'package:notesapp/screen/nav.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -25,18 +27,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddScreen(),
-            ),
-          );
-        },
-        child: Icon(Icons.add, size: 30, color: Colors.white),
-        backgroundColor: const Color.fromRGBO(42, 170, 210, 1),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => AddScreen(),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(Icons.add, size: 30, color: Colors.white),
+      //   backgroundColor: const Color.fromRGBO(42, 170, 210, 1),
+      // ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       appBar: AppBar(
         title: Text(
