@@ -151,7 +151,7 @@ class _AddScreenState extends State<AddScreen> {
                 : SizedBox(), // Menampilkan gambar yang dipilih
             _image != null
                 ? IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: Icon(Icons.delete, color: Colors.red,),
                     onPressed: () {
                       setState(() {
                         _image = null;

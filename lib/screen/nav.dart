@@ -48,7 +48,7 @@ class _NavState extends State<Nav> {
             label: 'Add Note',
             icon: CircleAvatar(
               radius: 20,
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               child: Icon(
                 Icons.add,
                 color: Colors.white,

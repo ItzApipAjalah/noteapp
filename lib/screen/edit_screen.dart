@@ -199,7 +199,7 @@ class _EditScreenState extends State<EditScreen> {
                     : SizedBox(), // Menampilkan gambar yang dipilih atau gambar yang ada sebelumnya
             _image != null || widget.note.imagePath != null
                 ? IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: Icon(Icons.delete, color: Colors.red,),
                     onPressed: () {
                       setState(() {
                         if (widget.note.imagePath != null) {

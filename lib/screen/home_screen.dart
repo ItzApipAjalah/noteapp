@@ -174,7 +174,7 @@ class NotesCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: Icon(Icons.edit, color: Colors.yellow,),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -185,7 +185,7 @@ class NotesCard extends StatelessWidget {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: Icon(Icons.delete, color: Colors.red,),
                   onPressed: () {
                     showDialog(
                         context: context,
