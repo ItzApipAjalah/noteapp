@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/NotesOperation.dart';
 import 'package:notesapp/models/note.dart';
@@ -17,6 +21,7 @@ class _EditScreenState extends State<EditScreen> {
   late TextEditingController _descriptionController;
   late int _titleCursorPosition;
   late int _descriptionCursorPosition;
+  File? _image;
 
   @override
   void initState() {
@@ -26,6 +31,11 @@ class _EditScreenState extends State<EditScreen> {
         TextEditingController(text: widget.note.description);
     _titleCursorPosition = _titleController.text.length;
     _descriptionCursorPosition = _descriptionController.text.length;
+
+    // Jika imagePath pada note tidak null, maka tampilkan gambar yang terkait
+    if (widget.note.imagePath != null) {
+      _image = File(widget.note.imagePath!);
+    }
   }
 
   @override
@@ -33,6 +43,18 @@ class _EditScreenState extends State<EditScreen> {
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().getImage(source: source);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
   @override
@@ -45,6 +67,24 @@ class _EditScreenState extends State<EditScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.photo_library,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              _getImage(ImageSource.gallery);
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.camera_alt,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              _getImage(ImageSource.camera);
+            },
+          ),
           Padding(
             padding: EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
@@ -65,7 +105,8 @@ class _EditScreenState extends State<EditScreen> {
                       ),
                     );
                   } else if (newTitle == widget.note.title &&
-                      newDescription == widget.note.description) {
+                      newDescription == widget.note.description &&
+                      _image == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('No data changes were made.'),
@@ -73,7 +114,12 @@ class _EditScreenState extends State<EditScreen> {
                     );
                   } else {
                     Provider.of<NotesOperation>(context, listen: false)
-                        .updateNote(widget.note.id, newTitle, newDescription);
+                        .updateNote(
+                      widget.note.id,
+                      newTitle,
+                      newDescription,
+                      _image,
+                    );
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -99,9 +145,8 @@ class _EditScreenState extends State<EditScreen> {
             TextField(
               decoration: InputDecoration(
                 enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.black), // Atur warna garis
-                ), // Garis pembatas di bawah input
+                  borderSide: BorderSide(color: Colors.black),
+                ),
                 hintText: 'Title',
                 hintStyle: TextStyle(
                   fontSize: 20,
@@ -147,6 +192,34 @@ class _EditScreenState extends State<EditScreen> {
                 },
               ),
             ),
+            _image != null
+                ? Image.file(_image!)
+                : widget.note.imagePath != null
+                    ? Image.file(File(widget.note.imagePath!))
+                    : SizedBox(), // Menampilkan gambar yang dipilih atau gambar yang ada sebelumnya
+            _image != null || widget.note.imagePath != null
+                ? IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        if (widget.note.imagePath != null) {
+                          // Hapus gambar dari penyimpanan lokal
+                          File(widget.note.imagePath!).deleteSync();
+                          // Perbarui catatan dengan menghapus imagePath
+                          Provider.of<NotesOperation>(context, listen: false)
+                              .updateNote(
+                            widget.note.id,
+                            widget.note.title,
+                            widget.note.description,
+                            null, // Set imagePath menjadi null
+                          );
+                        }
+                        // Hapus gambar dari tampilan
+                        _image = null;
+                      });
+                    },
+                  )
+                : SizedBox(), // Tombol untuk menghapus gambar
           ],
         ),
       ),

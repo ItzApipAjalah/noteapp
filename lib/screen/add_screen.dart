@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:notesapp/models/NotesOperation.dart';
@@ -11,6 +14,21 @@ class AddScreen extends StatefulWidget {
 class _AddScreenState extends State<AddScreen> {
   String titleText = '';
   String descriptionText = '';
+  File? _image;
+
+  final picker = ImagePicker();
+
+  Future getImage(ImageSource source) async {
+    final pickedFile = await picker.getImage(source: source);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +40,24 @@ class _AddScreenState extends State<AddScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.photo_library,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              getImage(ImageSource.gallery);
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.camera_alt,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              getImage(ImageSource.camera);
+            },
+          ),
           Padding(
             padding: EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
@@ -32,9 +68,12 @@ class _AddScreenState extends State<AddScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  if (titleText.isNotEmpty && descriptionText.isNotEmpty) {
+                  if (titleText.isNotEmpty &&
+                      descriptionText.isNotEmpty &&
+                      _image != null) {
                     Provider.of<NotesOperation>(context, listen: false)
-                        .addNewNote(titleText, descriptionText, DateTime.now());
+                        .addNewNote(
+                            titleText, descriptionText, DateTime.now(), _image);
                     Navigator.pop(context);
 
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -45,7 +84,8 @@ class _AddScreenState extends State<AddScreen> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Title and description cannot be empty.'),
+                        content: Text(
+                            'Title, description, and image cannot be empty.'),
                       ),
                     );
                   }
@@ -67,9 +107,8 @@ class _AddScreenState extends State<AddScreen> {
             TextField(
               decoration: InputDecoration(
                 enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.black), // Atur warna garis
-                ), // Garis pembatas di bawah input
+                  borderSide: BorderSide(color: Colors.black),
+                ),
                 hintText: 'Title',
                 hintStyle: TextStyle(
                   fontSize: 20,
@@ -107,6 +146,19 @@ class _AddScreenState extends State<AddScreen> {
                 },
               ),
             ),
+            _image != null
+                ? Image.file(_image!)
+                : SizedBox(), // Menampilkan gambar yang dipilih
+            _image != null
+                ? IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        _image = null;
+                      });
+                    },
+                  )
+                : SizedBox(), // Tombol untuk menghapus gambar
           ],
         ),
       ),

@@ -40,6 +40,7 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_launcher_icons: ^0.13.1
   curved_labeled_navigation_bar: ^2.0.2
+  image_picker: ^0.8.4+4
 
 
 flutter_icons:
